@@ -237,7 +237,7 @@ def get_ebook_links():
 
     reset_progress()
 
-    with futures.ProcessPoolExecutor() as executor:
+    with futures.ProcessPoolExecutor(max_workers=using_cores) as executor:
         for link in thread_list:  # all thread htmls
             # remove invalid file chars from file name
             thread_name = link.replace('?', '_').replace('/', '%') + '.html'

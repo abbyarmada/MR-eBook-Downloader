@@ -1,7 +1,7 @@
 import MrDeDownloader
 
 
-if __name__ == "__MrDeDownloader__":
+if __name__ == "__main__":
     MrDeDownloader.init()
     MrDeDownloader.clean_up()
     MrDeDownloader.create_needed_files()

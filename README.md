@@ -12,7 +12,7 @@ Download and unzip the latest release of this program/ script. (https://github.c
 Run `InstallMissingModules.sh`. This will install additional required modules for Python.
 
 ### Usage
-Run `Start.sh`.
+Run `Start.sh` or **better** run it from the command line!
 
 ### Created data
 - `ebook` folder where all ebooks will downloaded.
@@ -35,7 +35,7 @@ Downloade und entpacke die letzte Veröffentlichung von dem Downloader. (https:/
 Führe `InstallMissingModules.sh` aus. Dies wird gegebenenfalls fehlende, benötigte Python Module installieren.  
 
 ### Benutzung
-Starte `Start.sh`.
+Starte `Start.sh` oder **besser**, starte es von der Kommandozeile aus.
 
 ### Erstellte Daten
 - `ebook` der Ordner wohin alle eBooks heruntergeladen werden.

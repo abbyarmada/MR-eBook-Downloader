@@ -202,7 +202,8 @@ def get_ebook_links_from_file(path):
     not_found = ''
     thread_ebook_dict = {}
     for item in parser.link_data_list:
-        thread_ebook_dict[item[0]] = (item[1], parser.time)
+        valid_name = re.sub('[^\w\-_\. ]', '_', item[1])
+        thread_ebook_dict[item[0]] = (valid_name, parser.time)
     if len(thread_ebook_dict) <= 0:
         not_found = path
     return thread_ebook_dict, not_found

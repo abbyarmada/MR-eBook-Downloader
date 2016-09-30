@@ -29,7 +29,7 @@ Have in mind that you can be banned or something similar if you strained the MR 
 
 ## Information - *Deutsch*
 ### Installation
-Installiere Python 3 or höher, vergess dabei nicht die richtige Architektur zu wählen. (https://www.python.org/downloads/)  
+Installiere Python 3 oder höher, vergess dabei nicht die richtige Architektur zu wählen. (https://www.python.org/downloads/)  
 Downloade und entpacke die letzte Veröffentlichung von dem Downloader. (https://github.com/IceflowRE/MR-eBook-Downloader/releases)  
 Führe `InstallMissingModules.sh` aus. Dies wird gegebenenfalls fehlende, benötigte Python Module installieren.  
 

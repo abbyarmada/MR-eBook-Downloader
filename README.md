@@ -8,7 +8,7 @@ Dieses Programm/ Skript sollte all verfügbaren eBooks von der deutschen MobileR
 ## Information - *English*
 ### Installation
 Install Python 3 or greater, don't forget to use the correct architecture. (https://www.python.org/downloads/)  
-Download and unzip the latest release of this program/ script. (https://github.com/IceflowRE/MR-eBook-Downloader/releases)  
+Download and unzip the latest release of this program/ script. (https://github.com/IceflowRE/MR-eBook-Downloader/releases/latest)  
 Run `InstallMissingModules.sh`. This will install additional required modules for Python.
 
 ### Usage
@@ -31,7 +31,7 @@ Have in mind that you can be banned or something similar if you strained the MR 
 ## Information - *Deutsch*
 ### Installation
 Installiere Python 3 oder höher, vergess dabei nicht die richtige Architektur zu wählen. (https://www.python.org/downloads/)  
-Downloade und entpacke die letzte Veröffentlichung von dem Downloader. (https://github.com/IceflowRE/MR-eBook-Downloader/releases)  
+Downloade und entpacke die letzte Veröffentlichung von dem Downloader. (https://github.com/IceflowRE/MR-eBook-Downloader/releases/latest)  
 Führe `InstallMissingModules.sh` aus. Dies wird gegebenenfalls fehlende, benötigte Python Module installieren.  
 
 ### Benutzung

@@ -21,7 +21,7 @@ Run `Start.sh` or **better** run `StartDeDownload.py` from the command line!
 - `noEbookFound.txt` stores a list of threads where no ebook was found.
 
 ### Expert settings
-Faster download: edit in `MrDeDownloader.py` the line `using_core = 4`, change the number to a higher count. Have in mind that this will strain your PC and the MR server.
+Faster download: edit in `MrDeDownloader.py` the line `using_core = 4`, change the number to a higher count. Have in mind that this will strain your PC and the MR server.  
 Download only specific formats: edit in `MrDeDownloader.py` the line `format_list = ['epub', 'mobi', 'lrf', 'imp', 'pdf', 'lit', 'azw', 'azw3', 'rar', 'lrx']`, remove not needed formats.
 
 ### Notes
@@ -48,7 +48,7 @@ Schnellerer Download: ändere in der `MrDeDownloader.py` Datei die Zeile `using_
 Nur bestimmte Formate herunterladen: entferne in der `MrDeDownloader.py` Datei, in der Zeile `format_list = ['epub', 'mobi', 'lrf', 'imp', 'pdf', 'lit', 'azw', 'azw3', 'rar', 'lrx']` die entsprechenden Formate.
 
 ### Hinweis
-Es werden einige "falsche" Dateien heruntergeladen, beispielsweise Bilder oder Dateien mit einer falschen Dateiendung zum Beispiel `.pdb`, welche aber eine `.epub` darstellt.
+Es werden einige "falsche" Dateien heruntergeladen, beispielsweise Bilder oder Dateien mit einer falschen Dateiendung zum Beispiel `.pdb`, welche aber eine `.epub` darstellt.  
 Beachte auch, dass der MR Server stärker belastet wird und ein Ban oder ähnliche Maßnahmen erfolgen können.
 
 ---  

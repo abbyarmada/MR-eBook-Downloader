@@ -1,7 +1,7 @@
 # MR-eBook-Downloader
 
 This program/script should download all avaible ebooks from the german MobileRead wiki (http://wiki.mobileread.com/wiki/Free_eBooks-de/de)  
-Dieses Programm/ Skript sollte all verfügbaren eBooks von der deutschen MobileRead Wikiliste (http://wiki.mobileread.com/wiki/Free_eBooks-de/de) herunterladen.
+Dieses Programm/ Skript sollte alle verfügbaren eBooks von der deutschen MobileRead Wikiliste (http://wiki.mobileread.com/wiki/Free_eBooks-de/de) herunterladen.
 
 ---  
 
@@ -18,7 +18,7 @@ Run `Start.sh` or **better** run `StartDeDownload.py` from the command line!
 - `ebook` folder where all ebooks will downloaded.
 - `temp` stores the temporary data. At the end this folder should be deleted.  
 - `udpate.data` saves data over the downloaded ebooks, do not **deleted!** If you want to update or download the ebooks again it will only download the new ones.
-- `noEbookFound.txt` stores the threads where no ebook was found.
+- `noEbookFound.txt` stores a list of threads where no ebook was found.
 
 ### Expert settings
 Faster download: edit in `MrDeDownloader.py` the line `using_core = 4`, change the number to a higher count. Have in mind that this will strain your PC and the MR server.
@@ -41,7 +41,7 @@ Starte `Start.sh` oder **besser**, starte `StartDeDownload.py` von der Kommandoz
 - `ebook` der Ordner wohin alle eBooks heruntergeladen werden.
 - `temp` speichert temporär benötigte Daten. Diese sollten am Ende jedoch wieder gelöscht werden.  
 - `udpate.data` speichert Daten über die heruntergeladenen eBooks, nicht **löschen!** Falls der Donwloader nochmals ausgeführt wird, werden nur neue und aktualisierte eBooks heruntergeladen.
-- `noEbookFound.txt` stores the threads where no ebook was found.
+- `noEbookFound.txt` enthält eine List von Threads in welchen keine eBooks gefunden wurden.
 
 ### Experteneinstellungen
 Schnellerer Download: ändere in der `MrDeDownloader.py` Datei die Zeile `using_core = 4`, zu einer höheren Zahl. Beachte dabei jedoch, dass dies den PC und den MR Server stärker belastet.

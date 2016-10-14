@@ -12,7 +12,7 @@ Download and unzip the latest release of this program/ script. (https://github.c
 Run `InstallMissingModules.sh`. This will install additional required modules for Python.
 
 ### Usage
-Run `Start.sh` or **better** run `StartDeDownload.py` from the command line!
+Run `Start.sh` (Linux) or `Start.bat` (Windows) or **better** run `StartDeDownload.py` from the command line!
 
 ### Created data
 - `ebook` folder where all ebooks will downloaded.
@@ -25,7 +25,7 @@ Faster download: edit in `MrDeDownloader.py` the line `using_core = 4`, change t
 Download only specific formats: edit in `MrDeDownloader.py` the line `format_list = ['epub', 'mobi', 'lrf', 'imp', 'pdf', 'lit', 'azw', 'azw3', 'rar', 'lrx']`, remove not needed formats.
 
 ### Notes
-There will be some false positive for examples images or ebooks with wrong extensions e.g. `.pdb` which was a `.epub`.
+There will be some false positive for examples images or ebooks with wrong extensions e.g. `.pdb` which was a `.epub`.  
 Have in mind that you can be banned or something similar if you strained the MR server too much.  
 
 ## Information - *Deutsch*
@@ -35,7 +35,7 @@ Downloade und entpacke die letzte Veröffentlichung von dem Downloader. (https:/
 Führe `InstallMissingModules.sh` aus. Dies wird gegebenenfalls fehlende, benötigte Python Module installieren.  
 
 ### Benutzung
-Starte `Start.sh` oder **besser**, starte `StartDeDownload.py` von der Kommandozeile aus.
+Starte `Start.sh` (Linux) oder `Start.bat` (Windows) oder **besser**, starte `StartDeDownload.py` von der Kommandozeile aus.
 
 ### Erstellte Daten
 - `ebook` der Ordner wohin alle eBooks heruntergeladen werden.

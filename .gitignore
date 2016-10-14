@@ -1,5 +1,6 @@
 .idea/
 __pycache__/
 ebooks/
+temp/
 noEbookFound.txt
 update.data

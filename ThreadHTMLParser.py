@@ -103,7 +103,7 @@ class ThreadHTMLParser(HTMLParser):
         # a valid link must be inside an 'a' tag and data must be a valid format
         # last_link is empty if outside of an 'a' tag
         if (self.last_link != '') and ('attachment' in self.last_link):
-            # cut the link, only the part after the hostname is needed
+            self.last_link = re.sub(r'\?s=[\w]*\&', '&', self.last_link)  # cut of crazy additional ?s=[...] thing
             self.link_data_list.append((self.last_link, data))
 
         if self.in_em_tag:  # test for possible edit tag

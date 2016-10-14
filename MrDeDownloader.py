@@ -19,7 +19,7 @@ using_cores = 4  # multiprocessing.cpu_count()
 downloader = urllib3.HTTPConnectionPool('www.mobileread.com', maxsize=using_cores)
 format_list = ['epub', 'mobi', 'lrf', 'imp', 'pdf', 'lit', 'azw', 'azw3', 'rar', 'lrx']
 thread_list = []
-ebook_link_dict = {}
+ebook_link_dict = {}  # (link, [name, time])
 ebook_link_dict_old = {}
 ebook_download_list = []
 download_succeed_dict = {}
@@ -202,7 +202,7 @@ def get_ebook_links_from_file(path):
     not_found = ''
     thread_ebook_dict = {}
     for item in parser.link_data_list:
-        valid_name = re.sub('[^\w\-_\. ]', '_', item[1])
+        valid_name = re.sub('[^\w\-_. ]', '_', item[1])
         thread_ebook_dict[item[0]] = (valid_name, parser.time)
     if len(thread_ebook_dict) <= 0:
         not_found = path
@@ -329,6 +329,7 @@ def update_jsonfile():
 
     global ebook_link_dict_old
 
+    download_succeed_dict['wikilist_date'] = ebook_link_dict['wikilist_date']
     ebook_link_dict_old = {**ebook_link_dict_old, **download_succeed_dict}
 
     jsondata = json.dumps(ebook_link_dict_old, indent=4, sort_keys=True)
@@ -344,7 +345,7 @@ def write_no_ebook_founds():
     """
     with open("noEbookFound.txt", 'w') as writer:
         for item in not_found_ebooks_thread:
-            writer.write('http://www.mobileread.com' + item[15:-5].replace('_', '?').replace('%', '/'))
+            writer.write('http://www.mobileread.com' + item[15:-5].replace('_', '?').replace('%', '/') + '\n')
     writer.close()
 
 

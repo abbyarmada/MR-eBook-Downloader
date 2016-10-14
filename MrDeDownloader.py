@@ -26,6 +26,7 @@ ebook_link_dict = {}  # (link, [name, time])
 ebook_link_dict_old = {}
 ebook_download_list = []
 download_succeed_dict = {}
+download_failed_list = []
 not_found_ebooks_thread = []
 done_links = 0
 
@@ -150,16 +151,25 @@ def download_html_as_file(url, target_path):
     :param target_path: the target file.
     :return:
     """
+    download_success = "True"
+
     try:
         while os.path.isfile(target_path):
             target_path += "_d"
-        with downloader.request('GET', url, preload_content=False) as reader, open(str(target_path), 'wb') as out_file:
-            shutil.copyfileobj(reader, out_file)
+
+        with downloader.request('GET', url, preload_content=False) as reader:
+            if reader.status != 404:
+                with open(str(target_path), 'wb') as out_file:
+                    shutil.copyfileobj(reader, out_file)
+            else:
+                raise urllib3.exceptions.HTTPError("404")
         reader.release_conn()
     except Exception as exception:
-        print("DOWNLOAD ERROR: " + url + " MSG: " + str(exception))
-        return False
-    return True
+        download_success = "DOWNLOAD ERROR " + str(exception) + ": " + url
+    finally:
+        reader.release_conn()
+
+    return download_success
 
 
 def reset_progress():
@@ -303,16 +313,19 @@ def ebook_download_succeed(link, job):
     :param job:
     :return:
     """
+    global download_succeed_dict
+    global download_failed_list
+
     try:
         result = job.result()
     except Exception:
         print("  Failed to download: " + link)
         return
 
-    if result:
+    if result == "True":
         download_succeed_dict[link] = ebook_link_dict[link]
     else:
-        print("  Failed to download: " + link)
+        download_failed_list.append(link)
 
 
 def download_ebooks():
@@ -336,6 +349,7 @@ def download_ebooks():
             job.add_done_callback(functools.partial(print_progress, len(ebook_download_list)))
             job.add_done_callback(functools.partial(ebook_download_succeed, item[0]))
     print()
+    print(str(len(download_succeed_dict)) + "/" + str(len(ebook_download_list)) + " downloads succeed.")
 
 
 def update_jsonfile():
@@ -364,6 +378,17 @@ def write_no_ebook_founds():
     with open("noEbookFound.txt", 'w') as writer:
         for item in not_found_ebooks_thread:
             writer.write('http://www.mobileread.com' + item[15:-5].replace('_', '?').replace('%', '/') + '\n')
+    writer.close()
+
+
+def write_failed_downloads():
+    """
+    Writes the failed downloads to a file.
+    :return:
+    """
+    with open("downloadFailed.txt", 'w') as writer:
+        for item in download_failed_list:
+            writer.write(item + '\n')
     writer.close()
 
 

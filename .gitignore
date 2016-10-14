@@ -3,4 +3,5 @@ __pycache__/
 ebooks/
 temp/
 noEbookFound.txt
+downloadFailed.txt
 update.data

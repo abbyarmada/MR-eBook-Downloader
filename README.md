@@ -19,6 +19,7 @@ Run `Start.sh` (Linux) or `Start.bat` (Windows) or **better** run `StartDeDownlo
 - `temp` stores the temporary data. At the end this folder should be deleted.  
 - `udpate.data` saves data over the downloaded ebooks, do not **deleted!** If you want to update or download the ebooks again it will only download the new ones.
 - `noEbookFound.txt` stores a list of threads where no ebook was found.
+- `failedDownload.txt` stores a list of links where the download was failed. You can try a manual download, if you succeed you should not forget to add an entry to the update.data file.
 
 ### Expert settings
 Faster download: edit in `MrDeDownloader.py` the line `using_core = 4`, change the number to a higher count. Have in mind that this will strain your PC and the MR server.  
@@ -42,6 +43,7 @@ Starte `Start.sh` (Linux) oder `Start.bat` (Windows) oder **besser**, starte `St
 - `temp` speichert temporär benötigte Daten. Diese sollten am Ende jedoch wieder gelöscht werden.  
 - `udpate.data` speichert Daten über die heruntergeladenen eBooks, nicht **löschen!** Falls der Donwloader nochmals ausgeführt wird, werden nur neue und aktualisierte eBooks heruntergeladen.
 - `noEbookFound.txt` enthält eine List von Threads in welchen keine eBooks gefunden wurden.
+- `failedDownload.txt` enthält eine List von Links wo der Download fehlgeschlagen ist. Ein manueller Download kann versucht werden. Sollte dies klappen sollte man den entsprechenden Eintrag in der update.data ergänzen.
 
 ### Experteneinstellungen
 Schnellerer Download: ändere in der `MrDeDownloader.py` Datei die Zeile `using_core = 4`, zu einer höheren Zahl. Beachte dabei jedoch, dass dies den PC und den MR Server stärker belastet.

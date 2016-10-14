@@ -157,7 +157,7 @@ def download_html_as_file(url, target_path):
         while os.path.isfile(target_path):
             target_path += "_d"
 
-        with downloader.request('GET', url, preload_content=False) as reader:
+        with downloader.request('GET', url, preload_content=False, retries=urllib3.util.retry(3)) as reader:
             if reader.status != 404:
                 with open(str(target_path), 'wb') as out_file:
                     shutil.copyfileobj(reader, out_file)
@@ -166,8 +166,6 @@ def download_html_as_file(url, target_path):
         reader.release_conn()
     except Exception as exception:
         download_success = "DOWNLOAD ERROR " + str(exception) + ": " + url
-    finally:
-        reader.release_conn()
 
     return download_success
 

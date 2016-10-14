@@ -5,10 +5,13 @@ import functools
 import json
 import re
 from concurrent import futures
+import certifi
 import urllib3
 import ListHTMLParser
 import ThreadHTMLParser
 # import multiprocessing
+
+VERSION = ['1', '1', '0']
 
 temp_path = './temp/'
 threads_path = './temp/threads/'
@@ -38,6 +41,21 @@ def init():
         sys.exit('Only Python 3.0 or greater is supported. You are using:' + str(sys.version_info))
 
     ebook_link_dict['wikilist_date'] = 0
+
+
+def check_for_app_updates():
+    print("== CHECK FOR APPLICATION UPDATES ==")
+
+    https = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
+
+    ver = https.urlopen('GET', 'https://raw.githubusercontent.com/IceflowRE/MR-eBook-Downloader/master/version').data
+    newest_version = ver.decode('ascii')[:-1].split('_', 2)
+    for i in range(0, 3):
+        if VERSION[i] < newest_version[i]:
+            print()
+            print("!!! NEW VERSION AVAILABLE !!!")
+            print("https://github.com/IceflowRE/MR-eBook-Downloader/releases/latest")
+            print()
 
 
 def clean_up():

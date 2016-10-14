@@ -6,6 +6,8 @@ if __name__ == "__main__":
     MrDeDownloader.clean_up()
     MrDeDownloader.create_needed_files()
 
+    MrDeDownloader.check_for_app_updates()
+
     MrDeDownloader.load_from_jsonfile()
 
     MrDeDownloader.download_ebook_list()

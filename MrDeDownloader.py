@@ -11,7 +11,7 @@ import ListHTMLParser
 import ThreadHTMLParser
 # import multiprocessing
 
-VERSION = ['1', '1', '0']
+VERSION = ['1', '1', '1']
 
 temp_path = './temp/'
 threads_path = './temp/threads/'
@@ -102,6 +102,13 @@ def load_from_jsonfile():
     if 'wikilist_date' not in ebook_link_dict_old:
         ebook_link_dict_old['wikilist_date'] = 0
 
+    for item in ebook_link_dict_old:
+        if (not item.isdigit() and (item is not None)):
+            id = re.search(r"attachmentid=(\d)*", item)
+            if (id is not None):
+                id = id.group()[13:]
+                ebook_link_dict_old[id] = ebook_link_dict_old.pop(item)
+
 
 def download_ebook_list():
     """
@@ -112,7 +119,8 @@ def download_ebook_list():
 
     http = urllib3.PoolManager()
 
-    with http.request('GET', 'http://wiki.mobileread.com/wiki/Free_eBooks-de/de', preload_content=False) as load, open(
+    with http.request('GET', 'http://wiki.mobileread.com/wiki/Free_eBooks-de/de', preload_content=False,
+                      retries=urllib3.util.retry.Retry(3)) as load, open(
             (temp_path + 'main_list.html'), 'wb') as out_file:
         shutil.copyfileobj(load, out_file)
     load.release_conn()
@@ -157,12 +165,12 @@ def download_html_as_file(url, target_path):
         while os.path.isfile(target_path):
             target_path += "_d"
 
-        with downloader.request('GET', url, preload_content=False, retries=urllib3.util.retry(3)) as reader:
-            if reader.status != 404:
+        with downloader.request('GET', url, preload_content=False, retries=urllib3.util.retry.Retry(3)) as reader:
+            if reader.status == 200:
                 with open(str(target_path), 'wb') as out_file:
                     shutil.copyfileobj(reader, out_file)
             else:
-                raise urllib3.exceptions.HTTPError("404")
+                raise urllib3.exceptions.HTTPError(str(reader.status))
         reader.release_conn()
     except Exception as exception:
         download_success = "DOWNLOAD ERROR " + str(exception) + ": " + url
@@ -334,16 +342,10 @@ def download_ebooks():
     print("== DOWNLOAD EBOOKS ==")
 
     reset_progress()
-
     with futures.ProcessPoolExecutor(max_workers=using_cores) as executor:
         for item in ebook_download_list:
-            attach_id = re.search(r"attachmentid=(\d)*", item[0])
-            if attach_id is not None:
-                attach_id = attach_id.group()[13:]
-            else:
-                attach_id = ''
-            file_name = item[1][:item[1].rfind('.')] + '_id' + attach_id + item[1][(item[1].rfind('.') - len(item[1])):]
-            job = executor.submit(download_html_as_file, '/forums/' + item[0], download_path + file_name)
+            file_name = item[1][:item[1].rfind('.')] + '_id' + item[0] + item[1][(item[1].rfind('.') - len(item[1])):]
+            job = executor.submit(download_html_as_file, '/forums/attachment.php?attachmentid=' + item[0], download_path + file_name)
             job.add_done_callback(functools.partial(print_progress, len(ebook_download_list)))
             job.add_done_callback(functools.partial(ebook_download_succeed, item[0]))
     print()

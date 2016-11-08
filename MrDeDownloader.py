@@ -103,11 +103,11 @@ def load_from_jsonfile():
         ebook_link_dict_old['wikilist_date'] = 0
 
     for item in ebook_link_dict_old:
-        if (not item.isdigit() and (item is not None)):
-            id = re.search(r"attachmentid=(\d)*", item)
-            if (id is not None):
-                id = id.group()[13:]
-                ebook_link_dict_old[id] = ebook_link_dict_old.pop(item)
+        if not item.isdigit() and (item is not None):
+            attach_id = re.search(r"attachmentid=(\d)*", item)
+            if attach_id is not None:
+                attach_id = attach_id.group()[13:]
+                ebook_link_dict_old[attach_id] = ebook_link_dict_old.pop(item)
 
 
 def download_ebook_list():
@@ -122,7 +122,7 @@ def download_ebook_list():
     with http.request('GET', 'http://wiki.mobileread.com/wiki/Free_eBooks-de/de', preload_content=False,
                       retries=urllib3.util.retry.Retry(3)) as load, open(
             (temp_path + 'main_list.html'), 'wb') as out_file:
-        shutil.copyfileobj(load, out_file)
+                shutil.copyfileobj(load, out_file)
     load.release_conn()
 
 
@@ -282,7 +282,7 @@ def get_ebook_links():
             job.add_done_callback(collect_ebook_list)
 
     print()
-    print('eBooks found: ' + str(len(ebook_link_dict)))
+    print('eBooks found: ' + str(len(ebook_link_dict) - 1))  # -1 due to wikilist date
     print('Nothing found in !' + str(len(not_found_ebooks_thread)) + "! threads")
     # for item in not_found_ebooks_thread:  # debug proposes
     #     print(item)  # debug proposes
@@ -345,7 +345,8 @@ def download_ebooks():
     with futures.ProcessPoolExecutor(max_workers=using_cores) as executor:
         for item in ebook_download_list:
             file_name = item[1][:item[1].rfind('.')] + '_id' + item[0] + item[1][(item[1].rfind('.') - len(item[1])):]
-            job = executor.submit(download_html_as_file, '/forums/attachment.php?attachmentid=' + item[0], download_path + file_name)
+            job = executor.submit(download_html_as_file, '/forums/attachment.php?attachmentid=' + item[0],
+                                  download_path + file_name)
             job.add_done_callback(functools.partial(print_progress, len(ebook_download_list)))
             job.add_done_callback(functools.partial(ebook_download_succeed, item[0]))
     print()

@@ -54,7 +54,7 @@ class ThreadHTMLParser(HTMLParser):
         :param attrs:
         :return:
         """
-        # set if in poset sector
+        # set if in post sector
         if tag == 'div':
             for sub_tag, value in attrs:
                 if (sub_tag == 'id') and (value == 'posts'):

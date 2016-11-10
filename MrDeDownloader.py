@@ -22,11 +22,11 @@ using_cores = 4  # multiprocessing.cpu_count()
 downloader = urllib3.HTTPConnectionPool('www.mobileread.com', maxsize=using_cores)
 format_list = ['epub', 'mobi', 'lrf', 'imp', 'pdf', 'lit', 'azw', 'azw3', 'rar', 'lrx']
 thread_list = []
-ebook_link_dict = {}  # (link, [name, time])
-ebook_link_dict_old = {}
-ebook_download_list = []
-download_succeed_dict = {}
-download_failed_list = []
+ebook_link_dict = {}  # (id, [name, time])
+ebook_link_dict_old = {}  # (id, [name, time])
+ebook_download_list = []  # (id, name)
+download_succeed_list = [] # id
+download_failed_list = []  # id
 not_found_ebooks_thread = []
 done_links = 0
 
@@ -173,7 +173,7 @@ def download_html_as_file(url, target_path):
     :param target_path: the target file.
     :return:
     """
-    download_success = "True"
+    download_success = "TRUE"
 
     try:
         while os.path.isfile(target_path):
@@ -309,15 +309,17 @@ def check_for_updates():
     """
     print("== GENERATE DONWLOAD LIST ==")
 
-    for key, value in ebook_link_dict.items():
-        if key == 'wikilist_date':  # exclude the wikilist date
+    for at_id, value in ebook_link_dict.items():
+        if at_id == 'wikilist_date':  # exclude the wikilist date
             continue
-        if key in ebook_link_dict_old:
-            if value[1] > ebook_link_dict_old[key][1]:
-                ebook_download_list.append((key, value[0]))
+        if at_id in ebook_link_dict_old:  # if the ebook already was downloaded
+            if value[1] > ebook_link_dict_old[at_id][1]:  # if edited time is newer
+                ebook_download_list.append(at_id)
         else:
-            ebook_download_list.append((key, value[0]))
+            ebook_download_list.append(at_id)
 
+    # http://stackoverflow.com/questions/20672238/find-dictionary-keys-with-duplicate-values
+    # exists more then one time on the ebook lists
     rev_multidict = {}
     for key, value in ebook_link_dict.items():
         rev_multidict.setdefault(value, set()).add(key)
@@ -326,26 +328,36 @@ def check_for_updates():
     print("eBooks to download: " + str(len(ebook_download_list)))
 
 
-def ebook_download_succeed(link, job):
+def ebook_download_succeed(at_id, job):
     """
     Callback function for checking if the download was succeed.
-    :param link:
+    ONLY for ebook downloading!
+    :param at_id:
     :param job:
     :return:
     """
-    global download_succeed_dict
+    global download_succeed_list
     global download_failed_list
 
     try:
         result = job.result()
     except Exception:
-        print("  Failed to download: " + link)
+        download_failed_list.append(at_id)
         return
 
-    if result == "True":
-        download_succeed_dict[link] = ebook_link_dict[link]
+    if result == "TRUE":
+        name = ebook_link_dict[at_id][0]
+        filename = download_path + name[:name.rfind('.')] + '_id' + at_id + name[(name.rfind('.') - len(name)):]
+        with open(filename, 'r', encoding="latin") as reader:
+            check = reader.readline(14)
+            if check == "<!DOCTYPE html":  # if only the html file "Invalid Attachment specified." was downloaded
+                download_failed_list.append(at_id)
+            else:
+                download_succeed_list.append(at_id)
+        reader.close()
     else:
-        download_failed_list.append(link)
+        # print(result) # prints error message; debug proposes
+        download_failed_list.append(at_id)
 
 
 def download_ebooks():
@@ -357,14 +369,15 @@ def download_ebooks():
 
     reset_progress()
     with futures.ProcessPoolExecutor(max_workers=using_cores) as executor:
-        for item in ebook_download_list:
-            file_name = item[1][:item[1].rfind('.')] + '_id' + item[0] + item[1][(item[1].rfind('.') - len(item[1])):]
-            job = executor.submit(download_html_as_file, '/forums/attachment.php?attachmentid=' + item[0],
+        for at_id in ebook_download_list:
+            name = ebook_link_dict[at_id][0]
+            file_name = name[:name.rfind('.')] + '_id' + at_id + name[(name.rfind('.') - len(name)):]
+            job = executor.submit(download_html_as_file, '/forums/attachment.php?attachmentid=' + at_id,
                                   download_path + file_name)
             job.add_done_callback(functools.partial(print_progress, len(ebook_download_list)))
-            job.add_done_callback(functools.partial(ebook_download_succeed, item[0]))
+            job.add_done_callback(functools.partial(ebook_download_succeed, at_id))
     print()
-    print(str(len(download_succeed_dict)) + "/" + str(len(ebook_download_list)) + " downloads succeed.")
+    print(str(len(download_succeed_list)) + "/" + str(len(ebook_download_list)) + " downloads succeed.")
 
 
 def update_jsonfile():
@@ -376,8 +389,9 @@ def update_jsonfile():
 
     global ebook_link_dict_old
 
-    download_succeed_dict['wikilist_date'] = ebook_link_dict['wikilist_date']
-    ebook_link_dict_old = {**ebook_link_dict_old, **download_succeed_dict}
+    ebook_link_dict_old['wikilist_date'] = ebook_link_dict['wikilist_date']
+    for link in download_succeed_list:
+        ebook_link_dict_old[link] = ebook_link_dict[link]
 
     jsondata = json.dumps(ebook_link_dict_old, indent=4, sort_keys=True)
     with open(update_config_path, 'w') as writer:
@@ -402,8 +416,8 @@ def write_failed_downloads():
     :return:
     """
     with open("downloadFailed.txt", 'w') as writer:
-        for item in download_failed_list:
-            writer.write(item + '\n')
+        for at_id in download_failed_list:
+            writer.write(ebook_link_dict[at_id][0] + "\t" + "/forums/attachment.php?attachmentid=" + at_id + '\n')
     writer.close()
 
 

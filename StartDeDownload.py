@@ -16,6 +16,8 @@ if __name__ == "__main__":
 
     MrDeDownloader.download_ebook_threads()
 
+    MrDeDownloader.check_downloaded_threads()
+
     MrDeDownloader.get_ebook_links()
 
     MrDeDownloader.check_for_updates()

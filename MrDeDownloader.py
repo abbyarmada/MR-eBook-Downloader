@@ -293,6 +293,10 @@ def get_ebook_links():
     """
     print('== GET EBOOK LINKS ==')
 
+    if len(thread_list) == 0:
+        print("No thread download was successful.")
+        sys.exit()
+
     reset_progress()
 
     with futures.ProcessPoolExecutor(max_workers=using_cores) as executor:

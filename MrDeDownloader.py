@@ -152,20 +152,6 @@ def get_ebook_threads():
     print('Threads found: ' + str(len(thread_list)))
 
 
-def check_downloaded_threads():
-    """
-    Check for not downloaded threads and removes them from the thread list too.
-    :return:
-    """
-    global thread_list
-
-    for item in thread_list:
-        path = "temp/threads/" + item.replace('?', '_').replace('/', '%') + '.html'
-        if (not os.path.isfile(path)):
-            thread_list.remove(item)
-            print("Thread " + item + " was not downloaded.")
-
-
 def download_html_as_file(url, target_path):
     """
     Downloads the given files to the goven target path.
@@ -234,6 +220,20 @@ def download_ebook_threads():
             job = executor.submit(download_html_as_file, link, (threads_path + thread_name))
             job.add_done_callback(functools.partial(print_progress, len(thread_list)))
     print()
+
+
+def check_downloaded_threads():
+    """
+    Check for not downloaded threads and removes them from the thread list too.
+    :return:
+    """
+    global thread_list
+
+    for item in thread_list:
+        path = "temp/threads/" + item.replace('?', '_').replace('/', '%') + '.html'
+        if not os.path.isfile(path):
+            thread_list.remove(item)
+            print("Thread " + item + " was not downloaded.")
 
 
 def get_ebook_links_from_file(path):

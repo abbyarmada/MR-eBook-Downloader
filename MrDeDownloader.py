@@ -222,6 +222,19 @@ def download_ebook_threads():
     print()
 
 
+def exist_thread(thread):
+    """
+    Checks if an thread exist as html in temp/threads.
+    :param thread:
+    :return:
+    """
+    path = "temp/threads/" + thread.replace('?', '_').replace('/', '%') + '.html'
+    if not os.path.isfile(path):
+        print("Thread " + thread + " was not downloaded.")
+        return False
+    return True
+
+
 def check_downloaded_threads():
     """
     Check for not downloaded threads and removes them from the thread list too.
@@ -229,11 +242,7 @@ def check_downloaded_threads():
     """
     global thread_list
 
-    for item in thread_list:
-        path = "temp/threads/" + item.replace('?', '_').replace('/', '%') + '.html'
-        if not os.path.isfile(path):
-            thread_list.remove(item)
-            print("Thread " + item + " was not downloaded.")
+    thread_list = [thread for thread in thread_list if exist_thread(thread)]  # list which contains only existing threads
 
 
 def get_ebook_links_from_file(path):

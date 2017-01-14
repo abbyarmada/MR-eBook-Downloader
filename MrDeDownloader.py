@@ -32,6 +32,18 @@ not_found_ebooks_thread = []
 done_links = 0
 
 
+def about():
+    """
+    About methode, displays some information.
+    :return:
+    """
+    print(" == ABOUT ==")
+    print("Version: " + VERSION[0] + '.' + VERSION[1] + '.' + VERSION[2])
+    print("Web: https://github.com/IceflowRE/MR-eBook-Downloader")
+    print("Bitte teilt mir jeden Fehler mit! - Please report any bug!")
+    print()
+
+
 def init():
     """
     Initializes the needed global variables to proceed the installation.

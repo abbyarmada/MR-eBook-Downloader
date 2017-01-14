@@ -2,6 +2,8 @@ import MrDeDownloader
 
 
 if __name__ == "__main__":
+    MrDeDownloader.about()
+
     MrDeDownloader.init()
     MrDeDownloader.clean_up()
     MrDeDownloader.create_needed_files()

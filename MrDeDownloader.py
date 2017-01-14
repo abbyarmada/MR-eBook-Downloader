@@ -37,7 +37,7 @@ def about():
     About methode, displays some information.
     :return:
     """
-    print(" == ABOUT ==")
+    print('== ABOUT ==')
     print("Version: " + VERSION[0] + '.' + VERSION[1] + '.' + VERSION[2])
     print("Web: https://github.com/IceflowRE/MR-eBook-Downloader")
     print("Bitte teilt mir jeden Fehler mit! - Please report any bug!")
@@ -59,7 +59,7 @@ def init():
 
 
 def check_for_app_updates():
-    print("== CHECK FOR APPLICATION UPDATES ==")
+    print('== CHECK FOR APPLICATION UPDATES ==')
 
     https = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
 
@@ -110,6 +110,7 @@ def load_from_jsonfile():
     print("== LOAD EBOOK UPDATE FILE ==")
 
     global ebook_link_dict_old
+
     ebook_link_dict_old['wikilist_date'] = 0
     with open(update_config_path) as data_file:
         ebook_link_dict_old = json.loads(data_file.read())
@@ -159,8 +160,9 @@ def get_ebook_threads():
     thread_list = parser.thread_list
     ebook_link_dict['wikilist_date'] = parser.wiki_list_date
 
-    if ebook_link_dict['wikilist_date'] == 0:  # Debug
+    if ebook_link_dict['wikilist_date'] == 0:
         print("::ERROR:: Something wents wrong the wikilist time is 0")
+        sys.exit()
     if ebook_link_dict['wikilist_date'] == ebook_link_dict_old['wikilist_date']:
         print("Since last download nothing changed. No update is required.")
         sys.exit()

@@ -69,7 +69,7 @@ def check_for_app_updates():
             print("!!! NEW VERSION AVAILABLE !!!")
             print("https://github.com/IceflowRE/MR-eBook-Downloader/releases/latest")
             print()
-        break
+            break
     https.clear()
 
 

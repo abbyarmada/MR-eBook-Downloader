@@ -1,6 +1,4 @@
-import os
 import sys
-import shutil
 import functools
 import json
 import re
@@ -9,14 +7,15 @@ import certifi
 import urllib3
 import ListHTMLParser
 import ThreadHTMLParser
+from pathlib import Path
 # import multiprocessing
 
 VERSION = ['1', '1', '1']
 
-temp_path = './temp/'
-threads_path = './temp/threads/'
-download_path = './ebooks/'
-update_config_path = "update.data"
+temp_path = Path('./temp/')
+threads_path = Path('./temp/threads/')
+download_path = Path('./ebooks/')
+update_config_path = Path("./update.data")
 using_cores = 4  # multiprocessing.cpu_count()
 
 downloader = urllib3.HTTPSConnectionPool('www.mobileread.com', maxsize=using_cores, cert_reqs='CERT_REQUIRED',
@@ -74,6 +73,19 @@ def check_for_app_updates():
     https.clear()
 
 
+def delete_dir_rec(path):
+    """
+    Deletes a folder recursive.
+    :return:
+    """
+    for sub in path.iterdir():
+        if sub.is_dir():
+            delete_dir_rec(sub)
+        else:
+            sub.unlink()
+    path.rmdir()
+
+
 def clean_up():
     """
     Deletes temp folder.
@@ -81,8 +93,10 @@ def clean_up():
     """
     print('== DELETE TEMP ==')
 
-    if os.path.exists(temp_path):
-        shutil.rmtree(temp_path)
+    if temp_path.exists():
+        delete_dir_rec(temp_path)
+    if temp_path.exists():
+        print('::ERROR:: Temporary file was not deleted successful.')
 
 
 def create_needed_files():
@@ -90,16 +104,13 @@ def create_needed_files():
     Create all needed files.
     :return:
     """
-    if not os.path.exists(temp_path):
-        os.makedirs(temp_path)
-    if not os.path.exists(threads_path):
-        os.makedirs(threads_path)
-    if not os.path.exists(download_path):
-        os.makedirs(download_path)
-    if not os.path.isfile(update_config_path):
-        with open(update_config_path, 'w') as writer:
+    if not threads_path.exists():  # create temp and threads path
+        Path.mkdir(threads_path, parents=True)
+    if not download_path.exists():
+        Path.mkdir(download_path)
+    if not update_config_path.exists():
+        with update_config_path.open(mode='w') as writer:
             writer.write('{}')
-        writer.close()
 
 
 def load_from_jsonfile():
@@ -111,7 +122,7 @@ def load_from_jsonfile():
 
     global ebook_link_dict_old
 
-    with open(update_config_path) as data_file:
+    with update_config_path.open(mode='r') as data_file:
         ebook_link_dict_old = json.loads(data_file.read())
 
     if 'wikilist_date' not in ebook_link_dict_old.keys():
@@ -135,10 +146,9 @@ def download_ebook_list():
     https = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
 
     with https.request('GET', 'https://wiki.mobileread.com/wiki/Free_eBooks-de/de', preload_content=False,
-                       retries=urllib3.util.retry.Retry(3)) as load, open(
-        (temp_path + 'main_list.html'), 'wb') as out_file:
-        shutil.copyfileobj(load, out_file)
-    load.release_conn()
+                       retries=urllib3.util.retry.Retry(3)) as load:
+        with temp_path.joinpath('main_list.html').open(mode='wb') as out_file:
+            out_file.write(load.data)
     https.clear()
 
 
@@ -153,7 +163,8 @@ def get_ebook_threads():
     global ebook_link_dict
 
     parser = ListHTMLParser.ListHTMLParser(format_list)
-    parser.feed(open(temp_path + 'main_list.html', encoding="utf8").read())
+    with temp_path.joinpath('main_list.html').open(mode='r', encoding="utf8") as reader:
+        parser.feed(reader.read())
     parser.close()
 
     thread_list = parser.thread_list
@@ -169,7 +180,7 @@ def get_ebook_threads():
     print('Threads found: ' + str(len(thread_list)))
 
 
-def download_html_as_file(url, target_path):
+def download_html_as_file(url, target_path: Path):
     """
     Downloads the given files to the goven target path.
     :param url: URL.
@@ -179,16 +190,15 @@ def download_html_as_file(url, target_path):
     download_success = "TRUE"
 
     try:
-        while os.path.isfile(target_path):
-            target_path += "_d"
+        while target_path.exists():
+            target_path = Path(str(target_path) + "_d")
 
         with downloader.request('GET', url, preload_content=False, retries=urllib3.util.retry.Retry(3)) as reader:
             if reader.status == 200:
-                with open(str(target_path), 'wb') as out_file:
-                    shutil.copyfileobj(reader, out_file)
+                with target_path.open(mode='wb') as out_file:
+                    out_file.write(reader.data)
             else:
                 raise urllib3.exceptions.HTTPError(str(reader.status))
-        reader.release_conn()
     except Exception as exception:
         download_success = "DOWNLOAD ERROR " + str(exception) + ": " + url
 
@@ -234,7 +244,7 @@ def download_ebook_threads():
             # remove invalid file chars from file name
             thread_name = link.replace('?', '_').replace('/', '%') + '.html'
 
-            job = executor.submit(download_html_as_file, link, (threads_path + thread_name))
+            job = executor.submit(download_html_as_file, link, threads_path.joinpath(thread_name))
             job.add_done_callback(functools.partial(print_progress, len(thread_list)))
     print()
 
@@ -245,8 +255,8 @@ def exist_thread(thread):
     :param thread:
     :return:
     """
-    path = "temp/threads/" + thread.replace('?', '_').replace('/', '%') + '.html'
-    if not os.path.isfile(path):
+    path = threads_path.joinpath(thread.replace('?', '_').replace('/', '%') + '.html')
+    if not path.is_file():
         print("Thread " + thread + " was not downloaded.")
         return False
     return True
@@ -259,11 +269,10 @@ def check_downloaded_threads():
     """
     global thread_list
 
-    thread_list = [thread for thread in thread_list if
-                   exist_thread(thread)]  # list which contains only existing threads
+    thread_list = [thread for thread in thread_list if exist_thread(thread)]  # list contains only existing threads
 
 
-def get_ebook_links_from_file(path):
+def get_ebook_links_from_file(path: Path):
     """
     Extracts the ebook attachment links from given file.
     :param path:
@@ -271,7 +280,8 @@ def get_ebook_links_from_file(path):
     """
     parser = ThreadHTMLParser.ThreadHTMLParser(path)
     try:
-        parser.feed(open(path, encoding="latin-1").read())
+        with path.open(mode='r', encoding="latin-1") as reader:
+            parser.feed(reader.read())
     except Exception:
         return [], path
     not_found = ''
@@ -322,7 +332,7 @@ def get_ebook_links():
             # remove invalid file chars from file name
             thread_name = link.replace('?', '_').replace('/', '%') + '.html'
 
-            job = executor.submit(get_ebook_links_from_file, (threads_path + thread_name))
+            job = executor.submit(get_ebook_links_from_file, threads_path.joinpath(thread_name))
             job.add_done_callback(functools.partial(print_progress, len(thread_list)))
             job.add_done_callback(collect_ebook_list)
 
@@ -378,14 +388,13 @@ def ebook_download_succeed(at_id, job):
 
     if result == "TRUE":
         name = ebook_link_dict[at_id][0]
-        filename = download_path + name[:name.rfind('.')] + '_id' + at_id + name[(name.rfind('.') - len(name)):]
-        with open(filename, 'r', encoding="latin") as reader:
+        filename = download_path.joinpath(name[:name.rfind('.')] + '_id' + at_id + name[(name.rfind('.') - len(name)):])
+        with filename.open(mode='r', encoding="latin") as reader:
             check = reader.readline(14)
             if check == "<!DOCTYPE html":  # if only the html file "Invalid Attachment specified." was downloaded
                 download_failed_list.append(at_id)
             else:
                 download_succeed_list.append(at_id)
-        reader.close()
     else:
         # print(result) # prints error message; debug proposes
         download_failed_list.append(at_id)
@@ -404,7 +413,7 @@ def download_ebooks():
             name = ebook_link_dict[at_id][0]
             file_name = name[:name.rfind('.')] + '_id' + at_id + name[(name.rfind('.') - len(name)):]
             job = executor.submit(download_html_as_file, '/forums/attachment.php?attachmentid=' + at_id,
-                                  download_path + file_name)
+                                  download_path.joinpath(file_name))
             job.add_done_callback(functools.partial(print_progress, len(ebook_download_list)))
             job.add_done_callback(functools.partial(ebook_download_succeed, at_id))
     print()
@@ -425,9 +434,8 @@ def update_jsonfile():
         ebook_link_dict_old[link] = ebook_link_dict[link]
 
     jsondata = json.dumps(ebook_link_dict_old, indent=4, sort_keys=True)
-    with open(update_config_path, 'w') as writer:
+    with update_config_path.open(mode='w') as writer:
         writer.write(jsondata)
-    writer.close()
 
 
 def write_no_ebook_founds():
@@ -435,10 +443,9 @@ def write_no_ebook_founds():
     More a debug function, writes all forum threads which are on the wiki list and do not contain an ebook.
     :return:
     """
-    with open("noEbookFound.txt", 'w') as writer:
+    with Path("./noEbookFound.txt").open(mode='w') as writer:
         for item in not_found_ebooks_thread:
             writer.write('http://www.mobileread.com' + item[15:-5].replace('_', '?').replace('%', '/') + '\n')
-    writer.close()
 
 
 def write_failed_downloads():
@@ -446,10 +453,9 @@ def write_failed_downloads():
     Writes the failed downloads to a file.
     :return:
     """
-    with open("downloadFailed.txt", 'w') as writer:
+    with Path("downloadFailed.txt").open(mode='w') as writer:
         for at_id in download_failed_list:
             writer.write(ebook_link_dict[at_id][0] + "\t" + "/forums/attachment.php?attachmentid=" + at_id + '\n')
-    writer.close()
 
 
 def close_downloader():

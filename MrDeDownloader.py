@@ -66,7 +66,7 @@ def check_for_app_updates():
     for i in range(0, 3):
         if VERSION[i] < newest_version[i]:
             print()
-            print("!!! NEW VERSION AVAILABLE !!!")
+            print("!!! UPDATE AVAILABLE !!!")
             print("https://github.com/IceflowRE/MR-eBook-Downloader/releases/latest")
             print()
             break

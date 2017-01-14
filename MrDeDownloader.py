@@ -55,6 +55,7 @@ def init():
         sys.exit('Only Python 3.0 or greater is supported. You are using:' + str(sys.version_info))
 
     ebook_link_dict['wikilist_date'] = 0
+    ebook_link_dict_old['wikilist_date'] = 0
 
 
 def check_for_app_updates():

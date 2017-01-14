@@ -10,7 +10,7 @@ import ThreadHTMLParser
 from pathlib import Path
 # import multiprocessing
 
-VERSION = ['1', '1', '1']
+VERSION = ['1', '2', '0']
 
 temp_path = Path('./temp/')
 threads_path = Path('./temp/threads/')

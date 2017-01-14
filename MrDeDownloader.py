@@ -55,7 +55,6 @@ def init():
         sys.exit('Only Python 3.0 or greater is supported. You are using:' + str(sys.version_info))
 
     ebook_link_dict['wikilist_date'] = 0
-    ebook_link_dict_old['wikilist_date'] = 0
 
 
 def check_for_app_updates():
@@ -71,6 +70,7 @@ def check_for_app_updates():
             print("!!! NEW VERSION AVAILABLE !!!")
             print("https://github.com/IceflowRE/MR-eBook-Downloader/releases/latest")
             print()
+        break
     https.clear()
 
 
@@ -111,11 +111,10 @@ def load_from_jsonfile():
 
     global ebook_link_dict_old
 
-    ebook_link_dict_old['wikilist_date'] = 0
     with open(update_config_path) as data_file:
         ebook_link_dict_old = json.loads(data_file.read())
 
-    if 'wikilist_date' not in ebook_link_dict_old:
+    if 'wikilist_date' not in ebook_link_dict_old.keys():
         ebook_link_dict_old['wikilist_date'] = 0
 
     for item in ebook_link_dict_old:

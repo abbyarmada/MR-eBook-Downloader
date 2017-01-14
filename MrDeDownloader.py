@@ -19,13 +19,14 @@ download_path = './ebooks/'
 update_config_path = "update.data"
 using_cores = 4  # multiprocessing.cpu_count()
 
-downloader = urllib3.HTTPConnectionPool('www.mobileread.com', maxsize=using_cores)
+downloader = urllib3.HTTPSConnectionPool('www.mobileread.com', maxsize=using_cores, cert_reqs='CERT_REQUIRED',
+                                         ca_certs=certifi.where())
 format_list = ['epub', 'mobi', 'lrf', 'imp', 'pdf', 'lit', 'azw', 'azw3', 'rar', 'lrx']
 thread_list = []
 ebook_link_dict = {}  # (id, [name, time])
 ebook_link_dict_old = {}  # (id, [name, time])
 ebook_download_list = []  # (id, name)
-download_succeed_list = [] # id
+download_succeed_list = []  # id
 download_failed_list = []  # id
 not_found_ebooks_thread = []
 done_links = 0
@@ -57,6 +58,7 @@ def check_for_app_updates():
             print("!!! NEW VERSION AVAILABLE !!!")
             print("https://github.com/IceflowRE/MR-eBook-Downloader/releases/latest")
             print()
+    https.clear()
 
 
 def clean_up():
@@ -117,13 +119,14 @@ def download_ebook_list():
     """
     print('== DOWNLOAD EBOOK LIST ==')
 
-    http = urllib3.PoolManager()
+    https = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
 
-    with http.request('GET', 'http://wiki.mobileread.com/wiki/Free_eBooks-de/de', preload_content=False,
-                      retries=urllib3.util.retry.Retry(3)) as load, open(
-            (temp_path + 'main_list.html'), 'wb') as out_file:
-                shutil.copyfileobj(load, out_file)
+    with https.request('GET', 'https://wiki.mobileread.com/wiki/Free_eBooks-de/de', preload_content=False,
+                       retries=urllib3.util.retry.Retry(3)) as load, open(
+        (temp_path + 'main_list.html'), 'wb') as out_file:
+        shutil.copyfileobj(load, out_file)
     load.release_conn()
+    https.clear()
 
 
 def get_ebook_threads():
@@ -242,7 +245,8 @@ def check_downloaded_threads():
     """
     global thread_list
 
-    thread_list = [thread for thread in thread_list if exist_thread(thread)]  # list which contains only existing threads
+    thread_list = [thread for thread in thread_list if
+                   exist_thread(thread)]  # list which contains only existing threads
 
 
 def get_ebook_links_from_file(path):

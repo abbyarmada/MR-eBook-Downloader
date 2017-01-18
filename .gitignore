@@ -1,7 +1,7 @@
 .idea/
 __pycache__/
-ebooks/
-temp/
-noEbookFound.txt
-downloadFailed.txt
-update.data
+src/ebooks/
+src/temp/
+src/noEbookFound.txt
+src/downloadFailed.txt
+src/update.data

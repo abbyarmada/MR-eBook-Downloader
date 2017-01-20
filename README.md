@@ -1,4 +1,4 @@
-# MR-eBook-Downloader
+# MR-eBook-Downloader [![Code Climate](https://codeclimate.com/github/IceflowRE/MR-eBook-Downloader/badges/gpa.svg)](https://codeclimate.com/github/IceflowRE/MR-eBook-Downloader)
 
 This program/script should download all avaible ebooks from the german MobileRead wiki (http://wiki.mobileread.com/wiki/Free_eBooks-de/de)  
 Dieses Programm/ Skript sollte alle verfügbaren eBooks von der deutschen MobileRead Wikiliste (http://wiki.mobileread.com/wiki/Free_eBooks-de/de) herunterladen.

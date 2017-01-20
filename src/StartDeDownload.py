@@ -37,3 +37,4 @@ if __name__ == "__main__":
     MrDeDownloader.clean_up()
 
     print('Script says BYE')
+    input('Press Enter to exit')

@@ -109,7 +109,7 @@ def create_needed_files():
     if not download_path.exists():
         Path.mkdir(download_path)
     if not update_config_path.exists():
-        with update_config_path.open(mode='w') as writer:
+        with update_config_path.open(mode='w', encoding="utf8") as writer:
             writer.write('{}')
 
 
@@ -122,7 +122,7 @@ def load_from_jsonfile():
 
     global ebook_link_dict_old
 
-    with update_config_path.open(mode='r') as data_file:
+    with update_config_path.open(mode='r', encoding="utf8") as data_file:
         ebook_link_dict_old = json.loads(data_file.read())
 
     if 'wikilist_date' not in ebook_link_dict_old.keys():
@@ -280,7 +280,7 @@ def get_ebook_links_from_file(path: Path):
     """
     parser = ThreadHTMLParser.ThreadHTMLParser(path)
     try:
-        with path.open(mode='r', encoding="latin-1") as reader:
+        with path.open(mode='r', encoding="utf-8") as reader:
             parser.feed(reader.read())
     except Exception:
         return [], path
@@ -389,7 +389,7 @@ def ebook_download_succeed(at_id, job):
     if result == "TRUE":
         name = ebook_link_dict[at_id][0]
         filename = download_path.joinpath(name[:name.rfind('.')] + '_id' + at_id + name[(name.rfind('.') - len(name)):])
-        with filename.open(mode='r', encoding="latin") as reader:
+        with filename.open(mode='r', encoding="utf-8") as reader:
             check = reader.readline(14)
             if check == "<!DOCTYPE html":  # if only the html file "Invalid Attachment specified." was downloaded
                 download_failed_list.append(at_id)
@@ -434,7 +434,7 @@ def update_jsonfile():
         ebook_link_dict_old[link] = ebook_link_dict[link]
 
     jsondata = json.dumps(ebook_link_dict_old, indent=4, sort_keys=True)
-    with update_config_path.open(mode='w') as writer:
+    with update_config_path.open(mode='w', encoding="utf8") as writer:
         writer.write(jsondata)
 
 
@@ -443,7 +443,7 @@ def write_no_ebook_founds():
     More a debug function, writes all forum threads which are on the wiki list and do not contain an ebook.
     :return:
     """
-    with Path("./noEbookFound.txt").open(mode='w') as writer:
+    with Path("./noEbookFound.txt").open(mode='w', encoding="utf8") as writer:
         for item in not_found_ebooks_thread:
             writer.write('http://www.mobileread.com' + item[15:-5].replace('_', '?').replace('%', '/') + '\n')
 
@@ -453,7 +453,7 @@ def write_failed_downloads():
     Writes the failed downloads to a file.
     :return:
     """
-    with Path("downloadFailed.txt").open(mode='w') as writer:
+    with Path("downloadFailed.txt").open(mode='w', encoding="utf8") as writer:
         for at_id in download_failed_list:
             writer.write(ebook_link_dict[at_id][0] + "\t" + "/forums/attachment.php?attachmentid=" + at_id + '\n')
 

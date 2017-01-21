@@ -15,4 +15,5 @@ engines:
     enabled: true
 ratings:
   paths:
-  - "./src/"
+  - "**.py"
+

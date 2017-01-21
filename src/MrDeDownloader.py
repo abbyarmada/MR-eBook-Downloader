@@ -22,12 +22,12 @@ downloader = urllib3.HTTPSConnectionPool('www.mobileread.com', maxsize=using_cor
                                          ca_certs=certifi.where())
 format_list = ['epub', 'mobi', 'lrf', 'imp', 'pdf', 'lit', 'azw', 'azw3', 'rar', 'lrx']
 thread_list = []
-ebook_link_dict = {}  # (id, [name, time])
-ebook_link_dict_old = {}  # (id, [name, time])
+ebook_link_dict = {}  # id: (name, time)
+ebook_link_dict_old = {}  # id: (name, time)
 ebook_download_list = []  # (id, name)
 download_succeed_list = []  # id
 download_failed_list = []  # id
-not_found_ebooks_thread = []
+not_found_ebooks_thread = []  # thread
 done_links = 0
 
 
@@ -297,7 +297,7 @@ def get_ebook_links_from_file(path: Path):
 def collect_ebook_list(job):
     """
     Callback function collects and puts all ebook links together.
-    :param job:
+    :param job: (thread_ebook_dict <dict>, not_found <dict>)
     :return:
     """
     global ebook_link_dict

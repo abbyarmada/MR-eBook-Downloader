@@ -1,0 +1,14 @@
+languages:
+  Python: true
+engines:
+  pep8:
+    enabled: true
+  duplication:
+    enabled: true
+  fixme:
+    enabled: true
+  radon:
+    enabled: true
+ratings:
+  paths:
+  - "./src/"
